@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Watch Sleep</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World! It\'s not time for your next dosage yet!</string>
+    <string name="init_title">Accelerometer readings</string>
+    <string name="start_button_title">Start</string>
+    <string name="stop_button_title">Stop</string>
+    <string name="init_values">Getting data...</string>
+    <string name="sleep_button_title">Sleep</string>
+    <string name="pressed_button">You have pressed the button!</string>
+    <string name="wake_button_title">Wake Up</string>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@color/black">
+
+    <TextView android:id="@+id/readings_title"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/init_title" />
+
+    <TextView android:id="@+id/text_values"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/readings_title"
+        android:text="@string/init_values" />
+
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/start_button_title"-->
+        <!--android:id="@+id/startButton"-->
+        <!--android:layout_gravity="right|top"-->
+        <!--android:layout_alignTop="@+id/stopButton"-->
+        <!--android:layout_alignParentStart="true" />-->
+
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/stop_button_title"-->
+        <!--android:id="@+id/stopButton"-->
+        <!--android:layout_gravity="right|bottom"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_toEndOf="@+id/startButton" />-->
+</RelativeLayout>
