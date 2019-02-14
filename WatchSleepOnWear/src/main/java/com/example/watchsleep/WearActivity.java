@@ -10,10 +10,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+
 import java.util.ArrayList;
 
 public class WearActivity extends WearableActivity {
     private static final String TAG = WearActivity.class.getSimpleName();
+
+    private GoogleApiClient mGoogleApiClient;
 
     private Button sleepButton;
     private Button wakeButton;
@@ -86,11 +95,31 @@ public class WearActivity extends WearableActivity {
     // make onSensorChanged call this
     public void sendData() {
         Log.d(TAG, "sending data");
-        // make sure it is not null before attempting to access accelerometerData
-        if(accelerometerData.size() > 0) {
-            Log.d(TAG, accelerometerData.get(0) + " size is " + accelerometerData.size());
-        }
+        Log.d(TAG, accelerometerData.get(0) + " size is " + accelerometerData.size());
     }
+
+//    public void sendData()
+//    {
+//        if(accelerometerData.size() < 200) return;
+//
+//        Log.i(TAG, "Sending data!");
+//        Log.i(TAG, "Connected? " + mGoogleApiClient.isConnected());
+//
+//        if(mGoogleApiClient.isConnected())
+//        {
+//            PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/count");
+//            putDataMapReq.getDataMap().putStringArrayList("from_wear", accelerometerData);
+//
+//            PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+//            PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+//            Log.i(TAG, pendingResult.toString());
+//        }
+//
+//        accelerometerData.clear();
+//    }
+
+
+
 
     // https://android.okhelp.cz/onsensorchanged-android-example/
 //    @Override

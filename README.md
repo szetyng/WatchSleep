@@ -10,6 +10,7 @@ Todo:
 - send readings to phone and display them (processing and machine learning will be done later on)
 - monitor readings in ambient mode
 - automatically start the monitoring near bedtime, rather than fully depend on users to press the `Sleep` button
+- when in getting data mode, which should be in ambient mode, allow user to click on `Wake Up` button. What about automatic way?
 
 Soon:
 - would heart rate be useful?

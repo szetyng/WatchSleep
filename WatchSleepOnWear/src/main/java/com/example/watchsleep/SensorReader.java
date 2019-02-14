@@ -63,9 +63,6 @@ public class SensorReader implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         Log.d(TAG, "onSensorChanged is triggered");
-        if(accelerometerData.size() > 200) {
-            accelerometerData.clear();
-        }
         if (isMeasuring) {
             Log.d(TAG, "isMeasuring");
             // If sensor is unreliable, then just return
@@ -93,11 +90,15 @@ public class SensorReader implements SensorEventListener {
 //            );
             // MUST INITIALISE IT WITH SOMETHING FIRST, SEE ON CREATE VIEW
             accelerometerData.add(System.currentTimeMillis() + "," + gX + "," + gY + "," + gZ);
-            WearActivity.setAccelerometerData(accelerometerData);
 
-            // TODO: send data to server
-            WearActivity wear = new WearActivity();
-            wear.sendData();
+            if(accelerometerData.size() == 200) {
+                WearActivity.setAccelerometerData(accelerometerData);
+                WearActivity wear = new WearActivity();
+                wear.sendData();
+
+                accelerometerData.clear();
+            }
+
 
         }
         else{
