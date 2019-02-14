@@ -1,12 +1,7 @@
 package com.example.watchsleep;
 
-//import android.hardware.Sensor;
-//import android.hardware.SensorEvent;
-//import android.hardware.SensorManager;
 import android.content.Context;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
@@ -26,7 +21,11 @@ public class WearActivity extends WearableActivity {
     private SensorReader mSensorReader; // SensorEventListener
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
-    private ArrayList<String> accelerometerData;
+    private static ArrayList<String> accelerometerData;
+
+    public static void setAccelerometerData(ArrayList<String> newData) {
+        accelerometerData = newData;
+    }
 
     TextView mTextView;
     TextView mTextValues;
@@ -49,7 +48,7 @@ public class WearActivity extends WearableActivity {
                 mSensorReader = new SensorReader(); // new listener
                 mSensorManager.registerListener(mSensorReader, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
 
-
+                //sendData();
                 // go to ambient mode
             }
         });
@@ -79,7 +78,18 @@ public class WearActivity extends WearableActivity {
 
         Log.d(TAG, "log is working");
 
+        // initialise API client for sending data to phone here
 
+
+    }
+
+    // make onSensorChanged call this
+    public void sendData() {
+        Log.d(TAG, "sending data");
+        // make sure it is not null before attempting to access accelerometerData
+        if(accelerometerData.size() > 0) {
+            Log.d(TAG, accelerometerData.get(0) + " size is " + accelerometerData.size());
+        }
     }
 
     // https://android.okhelp.cz/onsensorchanged-android-example/

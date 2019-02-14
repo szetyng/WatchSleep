@@ -11,10 +11,9 @@ import java.util.ArrayList;
 
 public class SensorReader implements SensorEventListener {
     private static final String TAG = SensorReader.class.getSimpleName();
-    private ArrayList<String> accelerometerData;
+    private ArrayList<String> accelerometerData = new ArrayList<String>();
 
     private boolean isMeasuring = true;
-
 //    @Override
 //    public void onCreate(Bundle savedInstanceState){
 //        super.onCreate(savedInstanceState);
@@ -60,9 +59,13 @@ public class SensorReader implements SensorEventListener {
 //    }
 
 
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         Log.d(TAG, "onSensorChanged is triggered");
+        if(accelerometerData.size() > 200) {
+            accelerometerData.clear();
+        }
         if (isMeasuring) {
             Log.d(TAG, "isMeasuring");
             // If sensor is unreliable, then just return
@@ -89,9 +92,13 @@ public class SensorReader implements SensorEventListener {
 //                            "z = " + Float.toString(z) + "\n"
 //            );
             // MUST INITIALISE IT WITH SOMETHING FIRST, SEE ON CREATE VIEW
-            //accelerometerData.add(System.currentTimeMillis() + "," + gX + "," + gY + "," + gZ);
+            accelerometerData.add(System.currentTimeMillis() + "," + gX + "," + gY + "," + gZ);
+            WearActivity.setAccelerometerData(accelerometerData);
 
             // TODO: send data to server
+            WearActivity wear = new WearActivity();
+            wear.sendData();
+
         }
         else{
 
