@@ -3,4 +3,5 @@
     <string name="channel_name">channel_1</string>
     <string name="channel_description">The notification version of Hello World</string>
     <string name="show_notification">Show the new notification</string>
+    <string name="init_phone">No data has been received from the wearable yet</string>
 </resources>
