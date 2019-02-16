@@ -13,7 +13,7 @@ public class SensorReader implements SensorEventListener {
     private static final String TAG = SensorReader.class.getSimpleName();
     private ArrayList<String> accelerometerData = new ArrayList<String>();
 
-    private boolean isMeasuring = true;
+    // private boolean isMeasuring = true;
 //    @Override
 //    public void onCreate(Bundle savedInstanceState){
 //        super.onCreate(savedInstanceState);
@@ -62,47 +62,40 @@ public class SensorReader implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        Log.d(TAG, "onSensorChanged is triggered");
-        if (isMeasuring) {
-            Log.d(TAG, "isMeasuring");
-            // If sensor is unreliable, then just return
-            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {
-                return;
-            }
+        // Log.d(TAG, "onSensorChanged is triggered");
 
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
+        // If sensor is unreliable, then just return
+        if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {
+            return;
+        }
 
-            // Calculating something
-            float gX = x / SensorManager.GRAVITY_EARTH;
-            float gY = y / SensorManager.GRAVITY_EARTH;
-            float gZ = z / SensorManager.GRAVITY_EARTH;
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
 
-            Log.d(TAG, "x is " + Float.toString(x));
+        // Calculating something
+        float gX = x / SensorManager.GRAVITY_EARTH;
+        float gY = y / SensorManager.GRAVITY_EARTH;
+        float gZ = z / SensorManager.GRAVITY_EARTH;
+
+        // Log.d(TAG, "x is " + Float.toString(x));
 
 
-            // Show this on the watch face
+        // Show this on the watch face
 //            mTextValues.setText(
 //                    "x = " + Float.toString(x) + "\n" +
 //                            "y = " + Float.toString(y) + "\n" +
 //                            "z = " + Float.toString(z) + "\n"
 //            );
-            // MUST INITIALISE IT WITH SOMETHING FIRST, SEE ON CREATE VIEW
-            accelerometerData.add(System.currentTimeMillis() + "," + gX + "," + gY + "," + gZ);
 
-            if(accelerometerData.size() == 200) {
-                WearActivity.setAccelerometerData(accelerometerData);
-                WearActivity wear = new WearActivity();
-                wear.sendData();
+        accelerometerData.add(System.currentTimeMillis() + "," + gX + "," + gY + "," + gZ);
 
-                accelerometerData.clear();
-            }
+        if(accelerometerData.size() == 200) {
+            //WearActivity.setAccelerometerData(accelerometerData);
+            WearActivity wear = new WearActivity();
+            wear.sendData(accelerometerData);
 
-
-        }
-        else{
-
+            accelerometerData.clear();
         }
     }
 

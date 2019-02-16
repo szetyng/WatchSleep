@@ -30,11 +30,11 @@ public class WearActivity extends WearableActivity {
     private SensorReader mSensorReader; // SensorEventListener
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
-    private static ArrayList<String> accelerometerData;
+    // private static ArrayList<String> accelerometerData;
 
-    public static void setAccelerometerData(ArrayList<String> newData) {
-        accelerometerData = newData;
-    }
+//    public static void setAccelerometerData(ArrayList<String> newData) {
+//        accelerometerData = newData;
+//    }
 
     TextView mTextView;
     TextView mTextValues;
@@ -93,15 +93,12 @@ public class WearActivity extends WearableActivity {
     }
 
     // make onSensorChanged call this
-    public void sendData() {
+    public void sendData(ArrayList<String> accelerometerData) {
         Log.d(TAG, "sending data");
         Log.d(TAG, accelerometerData.get(0) + " size is " + accelerometerData.size());
     }
 
-//    public void sendData()
-//    {
-//        if(accelerometerData.size() < 200) return;
-//
+//    public void sendData() {
 //        Log.i(TAG, "Sending data!");
 //        Log.i(TAG, "Connected? " + mGoogleApiClient.isConnected());
 //
@@ -114,8 +111,6 @@ public class WearActivity extends WearableActivity {
 //            PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
 //            Log.i(TAG, pendingResult.toString());
 //        }
-//
-//        accelerometerData.clear();
 //    }
 
 
