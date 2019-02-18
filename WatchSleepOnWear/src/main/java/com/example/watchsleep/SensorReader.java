@@ -1,5 +1,8 @@
 package com.example.watchsleep;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,56 +12,28 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+
 public class SensorReader implements SensorEventListener {
+    // https://stackoverflow.com/questions/32227049/pass-context-from-activity
+    //private Context mContext;
+
+//    public SensorReader(Context context) {
+//        mContext = context;
+//    }
+
+    // https://stackoverflow.com/questions/7836415/call-a-public-method-in-the-activity-class-from-another-class#comment9554272_7836465
+    private WearActivity mFunc;
+
+    public SensorReader(WearActivity func) {
+        mFunc = func;
+    }
+
     private static final String TAG = SensorReader.class.getSimpleName();
     private ArrayList<String> accelerometerData = new ArrayList<String>();
 
-    // private boolean isMeasuring = true;
-//    @Override
-//    public void onCreate(Bundle savedInstanceState){
-//        super.onCreate(savedInstanceState);
-//
-//        accelerometerData = new ArrayList<String>();
-//        //Bundle args = getArguments();
-//
-//        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-//        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-//
-//    }
-
-//    private void initButtons(){
-//        startButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                isMeasuring = true;
-//            }
-//        });
-//
-//        stopButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                isMeasuring = false;
-//            }
-//        });
-//    }
-
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState){
-//        mView = inflater.inflate(R.layout.sensor, container, false);
-//
-//        mTextTitle = mView.findViewById(R.id.readings_title);
-//        // mTextTitle.setText(mSensor.getStringType());
-//        mTextValues = mView.findViewById(R.id.text_values);
-//
-//        startButton = mView.findViewById(R.id.startButton);
-//        stopButton = mView.findViewById(R.id.stopButton);
-//        initButtons();
-//
-//        return mView;
-//    }
 
 
+    //Intent intent = new Intent(mContext, WearActivity.sendData(accelerometerData));
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -91,9 +66,7 @@ public class SensorReader implements SensorEventListener {
         accelerometerData.add(System.currentTimeMillis() + "," + gX + "," + gY + "," + gZ);
 
         if(accelerometerData.size() == 200) {
-            //WearActivity.setAccelerometerData(accelerometerData);
-            WearActivity wear = new WearActivity();
-            wear.sendData(accelerometerData);
+            mFunc.sendData(accelerometerData);
 
             accelerometerData.clear();
         }
@@ -103,9 +76,4 @@ public class SensorReader implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
-
-//    @Override
-//    public void onResume(){
-//        super.onResume();
-//    }
 }

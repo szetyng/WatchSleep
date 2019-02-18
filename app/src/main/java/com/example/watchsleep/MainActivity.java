@@ -19,8 +19,6 @@ public class MainActivity extends Activity implements DataClient.OnDataChangedLi
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final String COUNT_KEY = "com.example.watchsleep.count";
-    private int count = 0;
-    private ArrayList<String> output;
 
     TextView mTextView;
 
