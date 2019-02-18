@@ -1,7 +1,6 @@
 package com.example.watchsleep;
 
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -11,12 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -34,50 +30,34 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
     private static final String COUNT_KEY = "com.example.watchsleep.count";
     private DataClient mDataClient; // = Wearable.getDataClient(this);
 
-    private GoogleApiClient mGoogleApiClient;
-
-
     private Button sleepButton;
     private Button wakeButton;
     private boolean isMeasuring;
-    private SensorReader mSensorReader; // SensorEventListener
+    private SensorReader mSensorReader; // implements SensorEventListener
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
-
 
     TextView mTextView;
 
     private void initButtons(){
-        // https://zocada.com/using-intents-extras-pass-data-activities-android-beginners-guide
-        //final Intent intent = new Intent(this, SensorReader.class);
-        mSensorReader = new SensorReader(this); // new listener
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
         sleepButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-            isMeasuring = true;
-            setContentView(R.layout.sensor);
+                isMeasuring = true;
+                setContentView(R.layout.sensor);
 
-            // Start reading accelerometer data
-            // https://android.processing.org/tutorials/sensors/index.html
+                // Start listening on button click
+                mSensorManager.registerListener(mSensorReader, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
 
-            //startActivity(intent);
-
-
-
-            mSensorManager.registerListener(mSensorReader, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
-
-            // go to ambient mode
+                // go to ambient mode
             }
         });
 
         wakeButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-            isMeasuring = false;
-            mTextView.setText("You woke up!");
+                isMeasuring = false;
+                mTextView.setText("You woke up!");
             }
         });
     }
@@ -91,62 +71,24 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
         wakeButton = findViewById(R.id.wakeButton);
         isMeasuring = false;
 
+        // Sensor-related instantiations
+        mSensorReader = new SensorReader(this); // new listener
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
         initButtons();
 
         // Enables Always-on
         setAmbientEnabled();
 
-        Log.d(TAG, "log is working");
-
-        // initialise API client for sending data to phone here
-        // https://developer.android.com/training/wearables/data-layer/accessing
-        mDataClient = Wearable.getDataClient(this);
-        if (mDataClient == null) {
-            Log.d(TAG, "in onCreate, NOOO");
-        }
-        else {
-            Log.d(TAG, "in onCreate, YESSS");
-        }
-
-        // TODO: https://stackoverflow.com/questions/47864730/connection-showing-null-wear-not-receiving-from-datalayer
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-//                    @Override
-//                    public void onConnected(Bundle connectionHint) {
-//                        Log.d(TAG, "onConnected: " + connectionHint);
-//                        // Now you can use the Data Layer API
-//                    }
-//
-//                    @Override
-//                    public void onConnectionSuspended(int cause) {
-//                        Log.d(TAG, "onConnectionSuspended: " + cause);
-//                    }
-//                })
-//                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-//                    @Override
-//                    public void onConnectionFailed(ConnectionResult result) {
-//                        Log.d(TAG, "onConnectionFailed: " + result);
-//                    }
-//                })
-//                // Request access only to the Wearable API
-//                .addApi(Wearable.API)
-//                .build();
-
-//        mGoogleApiClient.connect();
-    }
-    @Override
-    protected void onStart(){
-        super.onStart();
-        Log.d(TAG, "onStart");
+        // Instantiate API client for sending data to phone
         mDataClient = Wearable.getDataClient(this);
     }
-
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        mDataClient = Wearable.getDataClient(this);
         Wearable.getDataClient(this).addListener(this);
     }
 
@@ -157,81 +99,35 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
         Wearable.getDataClient(this).removeListener(this);
     }
 
+    // TODO: implement code to send data from phone to wearable
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_DELETED) {
-                Log.d(TAG, "DataItem deleted: " + event.getDataItem().getUri());
+                Log.i(TAG, "DataItem deleted: " + event.getDataItem().getUri());
             } else if (event.getType() == DataEvent.TYPE_CHANGED) {
-                Log.d(TAG, "DataItem changed: " + event.getDataItem().getUri());
+                Log.i(TAG, "DataItem changed: " + event.getDataItem().getUri());
             }
         }
     }
 
-
-    // Create a data map and put data in it
+    // SensorReader.OnSensorChanged() is calling this once for every 200 readings
     public void sendData(ArrayList<String> accelerometerData) {
-        Log.d(TAG, "sending data");
-        //mDataClient = Wearable.getDataClient(this);
-
-//        if (Wearable.getDataClient(this) == null) {
-//            Log.d(TAG, "what is going on");
-//        }
-//        else{
-//            Log.d(TAG, "YAYYY");
-//        }
+        Log.d(TAG, "sending data: " + accelerometerData);
 
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/count"); // create data map
         putDataMapReq.getDataMap().putStringArrayList(COUNT_KEY, accelerometerData); // put data in map
 
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-        // https://github.com/googlesamples/android-DataLayer/blob/master/Application/src/main/java/com/example/android/wearable/datalayer/MainActivity.java
 
-
+        // Send data
         Task<DataItem> putDataTask = mDataClient.putDataItem(putDataReq);
         putDataTask.addOnSuccessListener(
                 new OnSuccessListener<DataItem>() {
                     @Override
                     public void onSuccess(DataItem dataItem) {
-                        Log.d(TAG, "Sending text was successful: " + dataItem);
+                        Log.i(TAG, "Sending sensor readings was successful: " + dataItem);
                     }
                 });
-
-        //PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
-
-
-
-
     }
-
-    // make onSensorChanged call this
-    // https://developer.android.com/training/wearables/data-layer/data-items
-//    public void sendData(ArrayList<String> accelerometerData) {
-//        Log.d(TAG, "sending data");
-//        Log.d(TAG, accelerometerData.get(0) + " size is " + accelerometerData.size());
-//
-//
-//
-//
-//    }
-
-//    public void sendData() {
-//        Log.i(TAG, "Sending data!");
-//        Log.i(TAG, "Connected? " + mGoogleApiClient.isConnected());
-//
-//        if(mGoogleApiClient.isConnected())
-//        {
-//            PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/count");
-//            putDataMapReq.getDataMap().putStringArrayList("from_wear", accelerometerData);
-//
-//            PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-//            PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
-//            Log.i(TAG, pendingResult.toString());
-//        }
-//    }
-
-
-
-
-    // https://android.okhelp.cz/onsensorchanged-android-example/
 }
