@@ -103,7 +103,6 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
         Wearable.getDataClient(this).removeListener(this);
     }
 
-    // TODO: implement code to send data from phone to wearable
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         Log.d(TAG, "onDataChanged");
@@ -144,5 +143,7 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
     private void updateSchedule(String time) {
         nextDosageTime = time;
         Log.d(TAG, "received next dosage time: " + nextDosageTime);
+
+        mTextView.setText(nextDosageTime);
     }
 }
