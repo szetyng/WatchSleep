@@ -3,14 +3,20 @@ package com.example.watchsleep;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
@@ -20,13 +26,20 @@ public class MainActivity extends Activity implements DataClient.OnDataChangedLi
 
     private static final String COUNT_KEY = "com.example.watchsleep.count";
 
+    private DataClient mDataClient;
+
     TextView mTextView;
+    EditText mEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mTextView = findViewById(R.id.text_values);
+        mEditText = findViewById(R.id.edit_text);
+
+        // Instantiate data client
+        mDataClient = Wearable.getDataClient(this);
     }
 
     @Override
@@ -49,7 +62,7 @@ public class MainActivity extends Activity implements DataClient.OnDataChangedLi
                 // DataItem changed
                 Log.d(TAG, "DataItem TYPE_CHANGED");
                 DataItem item = event.getDataItem();
-                if (item.getUri().getPath().compareTo("/count") == 0) {
+                if (item.getUri().getPath().compareTo("/acc_data") == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     updateCount(dataMap.getStringArrayList(COUNT_KEY));
                 }
@@ -66,21 +79,45 @@ public class MainActivity extends Activity implements DataClient.OnDataChangedLi
     private void updateCount(ArrayList<String> c ) {
         Log.i(TAG, "UPDATE COUNT " + c);
 
-        String s = c.get(0);
+        if (c != null) {
+            String s = c.get(0);
 
-        String time = s.split(",")[0];
-        String x = s.split(",")[1];
-        String y = s.split(",")[2];
-        String z = s.split(",")[3];
+            String time = s.split(",")[0];
+            String x = s.split(",")[1];
+            String y = s.split(",")[2];
+            String z = s.split(",")[3];
 
-        // Show this on the phone
-        mTextView.setText(
-                "x = " + x + "\n" +
-                        "y = " + y + "\n" +
-                        "z = " + z + "\n"
-        );
-
-
+            // Show this on the phone
+            mTextView.setText(
+                    "x = " + x + "\n" +
+                            "y = " + y + "\n" +
+                            "z = " + z + "\n"
+            );
+        }
 
     }
+
+    public void sendTime(View view){
+        String toSend = mEditText.getText().toString();
+        if(toSend.isEmpty()) {
+            toSend = "You forgot to input time";
+        }
+        Log.d(TAG, "sending data: " + toSend);
+
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/dosage_time");
+        putDataMapReq.getDataMap().putString(COUNT_KEY, toSend);
+
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+
+        // Send data
+        Task<DataItem> putDataTask = mDataClient.putDataItem(putDataReq);
+        putDataTask.addOnSuccessListener(
+                new OnSuccessListener<DataItem>() {
+                    @Override
+                    public void onSuccess(DataItem dataItem) {
+                        Log.i(TAG, "Sending time was successful: " + dataItem);
+                    }
+                });
+    }
+
 }

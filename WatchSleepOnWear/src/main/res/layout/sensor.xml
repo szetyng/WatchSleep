@@ -9,14 +9,14 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="@string/init_title" />
+        android:text="@string/in_bed" />
 
-    <TextView android:id="@+id/text_values"
+    <Button android:id="@+id/wakeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/readings_title"
-        android:text="@string/init_values" />
+        android:text="@string/wake_button_title" />
 
     <!--<Button-->
         <!--android:layout_width="wrap_content"-->

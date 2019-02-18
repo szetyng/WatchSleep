@@ -7,13 +7,16 @@
 The WearOS application for CaterPillar. It constantly monitors the accelerometer readings from the user's smartwatch and sends it to the phone application to be processed. Note: to receive notifications, can just extend it from the phone app.
 
 Todo:
-- send readings to phone and display them (processing and machine learning will be done later on)
 - monitor readings in ambient mode
 - automatically start the monitoring near bedtime, rather than fully depend on users to press the `Sleep` button
 - when in getting data mode, which should be in ambient mode, allow user to click on `Wake Up` button. What about automatic way?
 
 Soon:
 - would heart rate be useful?
+
+## Progress Update
+- click a button on the wearable to start listening for accelerometer data
+- sends accelerometer data as an array to the phone with every 200 readings, and phone will display it on the screen
 
 ## Development
 On Mac:

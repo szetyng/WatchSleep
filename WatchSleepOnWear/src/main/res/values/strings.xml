@@ -12,4 +12,5 @@
     <string name="sleep_button_title">Sleep</string>
     <string name="pressed_button">You have pressed the button!</string>
     <string name="wake_button_title">Wake Up</string>
+    <string name="in_bed">You have gone to sleep. Goodnight!</string>
 </resources>

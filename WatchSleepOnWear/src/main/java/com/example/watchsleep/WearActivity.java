@@ -17,6 +17,8 @@ import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -37,6 +39,8 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
 
+    private String nextDosageTime;
+
     TextView mTextView;
 
     private void initButtons(){
@@ -44,12 +48,11 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
             @Override
             public void onClick(View v) {
                 isMeasuring = true;
+                // go to ambient mode
                 setContentView(R.layout.sensor);
 
                 // Start listening on button click
                 mSensorManager.registerListener(mSensorReader, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
-
-                // go to ambient mode
             }
         });
 
@@ -57,6 +60,7 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
             @Override
             public void onClick(View v) {
                 isMeasuring = false;
+                setContentView(R.layout.activity_wear);
                 mTextView.setText("You woke up!");
             }
         });
@@ -102,11 +106,17 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
     // TODO: implement code to send data from phone to wearable
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
+        Log.d(TAG, "onDataChanged");
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_DELETED) {
                 Log.i(TAG, "DataItem deleted: " + event.getDataItem().getUri());
             } else if (event.getType() == DataEvent.TYPE_CHANGED) {
                 Log.i(TAG, "DataItem changed: " + event.getDataItem().getUri());
+                DataItem item = event.getDataItem();
+                if (item.getUri().getPath().compareTo("/dosage_time") == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    updateSchedule(dataMap.getString(COUNT_KEY));
+                }
             }
         }
     }
@@ -115,7 +125,7 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
     public void sendData(ArrayList<String> accelerometerData) {
         Log.d(TAG, "sending data: " + accelerometerData);
 
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/count"); // create data map
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/acc_data"); // create data map
         putDataMapReq.getDataMap().putStringArrayList(COUNT_KEY, accelerometerData); // put data in map
 
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
@@ -129,5 +139,10 @@ public class WearActivity extends WearableActivity implements DataClient.OnDataC
                         Log.i(TAG, "Sending sensor readings was successful: " + dataItem);
                     }
                 });
+    }
+
+    private void updateSchedule(String time) {
+        nextDosageTime = time;
+        Log.d(TAG, "received next dosage time: " + nextDosageTime);
     }
 }
